@@ -1,0 +1,26 @@
+- Creating virtual Envoirement:
+python3 -m venv <Name of the Envoirement> 
+example: python3 -m venv virtualenvoirement
+
+- Entering the virtual Envoirement:
+source <Name of the Envoirement>/bin/activate
+example: source virtualenvoirement/bin/activate
+
+
+- Checking the installed module/packages:
+pip3 freeze
+
+- To install module/packages:
+pip3 install requests
+
+- To install module/packages in virutal Envoirement for other people:
+
+-- in your local machinerun: 
+pip3 freeze > requirements.txt (example of file Name)
+
+-- then on virutal Envoirement run: 
+pip3 install -r requirements.txt (example of file Name)
+
+
+- To exit the virtual Envoirement:
+deactivate
