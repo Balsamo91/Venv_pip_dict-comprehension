@@ -1,0 +1,41 @@
+1. Start
+
+2. Import required libraries:
+   - datetime
+   - requests
+   - json
+
+3. Define a function to fetch weather data from the API:
+   - Takes latitude, longitude, and date as input parameters
+   - Constructs the API endpoint URL with provided parameters
+   - Sends a GET request to the API
+   - Parses the JSON response
+   - Returns precipitation value or None if no data available
+
+4. Define a function to validate date format:
+   - Takes a date string as input
+   - Checks if the date string matches the format "YYYY-mm-dd"
+   - Returns True if valid, False otherwise
+
+5. Define a function to prompt the user for date input:
+   - Asks the user to input a date in the format "YYYY-mm-dd"
+   - Validates the input format using the function defined in step 4
+   - Returns the validated date string
+
+6. Define a function to save query results to a file:
+   - Takes date and precipitation value as input parameters
+   - Opens a file in append mode
+   - Writes the date and precipitation value in a formatted manner
+   - Closes the file
+
+7. Main program:
+   - Call the function to prompt the user for a date input
+   - If no date is provided, set the date to the next day
+   - Try to open the file to check if the data for the provided date is already available:
+     - If the file exists and contains data for the provided date, retrieve the precipitation value from the file
+     - Otherwise, make a request to the API to fetch weather data for the provided date
+       - If data is available, extract the precipitation value and save it to the file
+       - If no data is available, print "I don't know"
+   - Print the precipitation value to the user
+
+8. End
