@@ -11,4 +11,5 @@ url = "https://api.open-meteo.com/v1/forecast?latitude=53.40311&longitude=-6.270
 
 respone = requests.get(url)
 
+print(respone.json())
 print(respone.text)

@@ -25,30 +25,11 @@
 
 print("\nWelcome to Valerio's Forecast!")
 
-# g = geocoder.google(input("please provide city: "))
-# ask = input
-# g = geocoder.google("Dublin")
-# def ask_for_date():
-#     date = input("please provide a date in the 'YYYY-mm-dd' format: ")
-# print(g)
-##########################################
-# 'daily': {'time': ['2024-04-05']
-# with open("dates.txt", "r") as file:
-#     for lines in file:
-#         date = json.loads(lines)
-#         print(type(date))
-#         for i in date:
-#             daily_file = i["daily"]
-#             print(daily_file)
-
 import datetime
 import requests
 # # import geocoder
 import ast
-
-
-# response = requests.get(url + f"v1/forecast?latitude={latitude}&longitude={longitude}&daily=precipitation_sum&timezone=Europe%2FLondon&start_date={searched_date}&end_date={searched_date}")
-
+import json
 
 url = "https://api.open-meteo.com"
 
@@ -71,24 +52,49 @@ while True:
         dictionary = ast.literal_eval(date) # Convert string to dictionary
         daily = dictionary.get("daily", {})
         time = daily.get("time", [])
+        # print(time)
 
-        date_found = False
-        for d in time:
-            if searched_date == d:
-                date_found = True
-                break
-        if date_found:
-            print(dictionary)
-            break
+        if searched_date in time:
+            precip_value = daily.get("precipitation_sum", [])
+            print(precip_value)
+            for v in precip_value:
+
+                if v > 0.0:
+                    print(f"It will rain as precipitation value is: {v}")
+                    break
+
+                elif v == 0.0:
+                    print(f"It will not rain as precipitation value is: {v}")
+                    break
+
+                else:
+                    print("I do not Know!")
+                    break
+        else:
+            file.close()
             
-    if not date_found: 
+
+        # date_found = False
+        # for d in time:
+        #     if searched_date == d:
+        #         date_found = True
+        #         break
+        # if date_found:
+        #     print(dictionary)
+        #     break
+            
+    if searched_date not in time: 
         # latitude = input("\nPlease enter latitude: ")
         # longitude = input("\nPlease enter longitude: ")
         response = requests.get(url + f"/v1/forecast?latitude=53.40311&longitude=-6.27021&daily=precipitation_sum&timezone=Europe%2FLondon&start_date={searched_date}&end_date={searched_date}")
-        
-        response_json = response.json()
         # print(response)
         # print(type(response_json))
+
+        response_json = response.json()
+        with open("dates.txt", "a") as file_1:
+            file_1.write(json.dumps(response_json) + '\n')
+        file_1.close()
+
         daily_precip_sum = response_json.get("daily", {})
         precipitation_sum = daily_precip_sum.get("precipitation_sum", [])
         # print("Precipitation Sum: ")
@@ -104,49 +110,10 @@ while True:
             else:
                 print("I do not Know!")
                 break
-
-                                             
-
-
-
-
     
-
-
-
-
-
-
-
-
-    # print(time)
-
-
-# if searched_date == time:
-#     print(date)
-
-# else:
-#     print("NANANANANANAN")
-
-
-
-
-
-
-# file_rw = open("dates.txt", "r")
-# print(file_rw.read())
-
-
-
-
-# put the below in a If statement search_date is not in 'file.txt':
-# latitude = input("\nPlease enter latitude: ")
-# longitude = input("\nPlease enter longitude: ")
-
-
-# response = requests.get(url + f"v1/forecast?latitude={latitude}&longitude={longitude}&daily=precipitation_sum&timezone=Europe%2FLondon&start_date={searched_date}&end_date={searched_date}")
-
-
+    else:
+        print("nonononon")
+        break
 
 
 
