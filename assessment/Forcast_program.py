@@ -18,7 +18,7 @@ while True:
         year = current_time.year
         month = current_time.month
         day = current_time.day
-        # Conbine year+month+day to have them shown in the expected format
+        # Combine year+month+day to have them shown in the expected format
         searched_date = f"{year}-{month:02d}-{day:02d}"
 
     else:
@@ -43,6 +43,7 @@ while True:
             daily = dictionary.get("daily", {})
             time = daily.get("time", [])
 
+            # Checking if the input date is matching in time variable AND the input city is matching city using the reverse method from the coordinates found in file 
             if searched_date in time and city in geocoder.arcgis([latitude, longitude], method='reverse').city:
                 found = True
                 precip_value = daily.get("precipitation_sum", [])
@@ -76,7 +77,7 @@ while True:
 
                 daily_precip_sum = response_json.get("daily", {})
                 precipitation_sum = daily_precip_sum.get("precipitation_sum", [])
-                # print("Precipitation Sum: ")
+                
                 for value in precipitation_sum:
                     if value > 0.0:
                         print(f"It will rain as precipitation value is: {value}")
