@@ -31,67 +31,74 @@ while True:
     city = input("\nWhat city do you want to check? ").capitalize()
 
     found = False
-    with open("dates.txt", "r+") as file:
-        for line in file:
-            dictionary = json.loads(line)
+    try:
+        with open("dates.txt", "r") as file:
+            for line in file:
+                dictionary = json.loads(line)
 
-            # Parsing latitude and longitude in dates.txt
-            latitude =dictionary["latitude"]
-            longitude = dictionary["longitude"]
+                # Parsing latitude and longitude in dates.txt
+                latitude =dictionary["latitude"]
+                longitude = dictionary["longitude"]
 
-            # Parsing daily dict in dates.txt
-            daily = dictionary.get("daily", {})
-            time = daily.get("time", [])
+                # Parsing daily dict in dates.txt
+                daily = dictionary.get("daily", {})
+                time = daily.get("time", [])
 
-            # Checking if the input date is matching in time variable AND the input city is matching city using the reverse method from the coordinates found in file 
-            if searched_date in time and city in geocoder.arcgis([latitude, longitude], method='reverse').city:
-                found = True
-                precip_value = daily.get("precipitation_sum", [])
-                print(precip_value)
-                for v in precip_value:
+                # Checking if the input date is matching in time variable AND the input city is matching city using the reverse method from the coordinates found in file 
+                if searched_date in time and city in geocoder.arcgis([latitude, longitude], method='reverse').city:
+                    found = True
+                    precip_value = daily.get("precipitation_sum", [])
+                    print(precip_value)
+                    for v in precip_value:
 
-                    if v > 0.0:
-                        print(f"It will rain as precipitation value is: {v}")
-                        break
-                        
-                    elif v == 0.0:
-                        print(f"It will not rain as precipitation value is: {v}")
-                        break
+                        if v > 0.0:
+                            print(f"It will rain as precipitation value is: {v}")
+                            break
+                            
+                        elif v == 0.0:
+                            print(f"It will not rain as precipitation value is: {v}")
+                            break
 
-                    else:
-                        print("I do not Know!")
-                        break
+                        else:
+                            print("I do not Know!")
+                            break
+    except FileNotFoundError:
+        print("\nFile 'dates.txt' not found. Creating a new file.\n")
         
-        if not found:
-            location = geocoder.arcgis(city)
+        with open("dates.txt", "w") as file:
+            found = False
 
-            if location.ok:
-                latitude = location.latlng[0]
-                longitude = location.latlng[1]
+    if not found:
+        location = geocoder.arcgis(city)
 
-                response = requests.get(url + f"/v1/forecast?latitude={latitude}&longitude={longitude}&daily=precipitation_sum&timezone=Europe%2FLondon&start_date={searched_date}&end_date={searched_date}")
+        if location.ok:
+            latitude = location.latlng[0]
+            longitude = location.latlng[1]
 
-                response_json = response.json()
-                response_write = json.dumps(response_json) + '\n'
+            response = requests.get(url + f"/v1/forecast?latitude={latitude}&longitude={longitude}&daily=precipitation_sum&timezone=Europe%2FLondon&start_date={searched_date}&end_date={searched_date}")
+
+            response_json = response.json()
+            response_write = json.dumps(response_json) + '\n'
+            with open("dates.txt", "a") as file:
                 file.write(response_write)
 
-                daily_precip_sum = response_json.get("daily", {})
-                precipitation_sum = daily_precip_sum.get("precipitation_sum", [])
-                
-                for value in precipitation_sum:
-                    if value > 0.0:
-                        print(f"It will rain as precipitation value is: {value}")
-                        break
+            daily_precip_sum = response_json.get("daily", {})
+            precipitation_sum = daily_precip_sum.get("precipitation_sum", [])
+            
+            for value in precipitation_sum:
+                if value > 0.0:
+                    print(f"It will rain as precipitation value is: {value}")
+                    break
 
-                    elif value == 0.0:
-                        print(f"It will not rain as precipitation value is: {value}")
-                        break
+                elif value == 0.0:
+                    print(f"It will not rain as precipitation value is: {value}")
+                    break
 
-                    else:
-                        print("I do not Know!")
-                        break
-            else:
-                print("\nCould not find coordinates for the city.")
+                else:
+                    print("I do not Know!")
+                    break
+        else:
+            print("\nCould not find coordinates for the city.")
 
     if input("\nWould you like to continue? (yes/no): ").lower() != "yes":
         file.close() # Close the file before exiting the loop
